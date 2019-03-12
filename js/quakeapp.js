@@ -1,6 +1,6 @@
 // all earthquakes past 7 days geojson data from usgs
 
-var mapZoomLevel = 12;
+var mapZoomLevel = 6;
 var gData=[];
  
  const link ="https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
@@ -13,19 +13,51 @@ var gData=[];
 
 
 function createFeatures(earthquakeFeatures){
+    /*by passing a pointToLayer function in a GeoJSON options object when creating the GeoJSON layer. This function is passed a LatLng and should return an instance of ILayer, in this case likely a Marker or CircleMarker.
 
-    function onEachFeature(feature, layer) {
-      layer.bindPopup("<h3>" + feature.properties.place +
-        "</h3><hr><p>"  + feature.properties.mag + "</p>");
-    }
-  
-    var earthquakes = L.geoJSON(earthquakeFeatures, {
-      onEachFeature: onEachFeature
+  */
+
+    let r=12;
+    let col="#FF4500"; // red-orang
+
+    earthquakes = L.geoJson(earthquakeFeatures), {
+        style: function(feature) {
+            return {
+                color: "red",
+                radius:14
+            };
+         },
+        pointToLayer: function(feature, latlng) {
+            if (feature.properties.mag >4 && feature.properties.mag<5 ){
+                r=10;
+                col="FF6347";
+            }else if(feature.properties.mag >3 && feature.properties.mag<4){
+                r=8;
+                col="#DAA520";
+            }else if (feature.properties.mag >2 && feature.properties.mag<3){
+                r=6;
+                col="#ADFF2D";
+            }else if (feature.properties.mag >1 && feature.properties.mag<2){
+                r=4;
+                col="#ADFF2D";
+            }else{
+                r=2;
+                col="#90EE90";
+            }
+            return new L.CircleMarker(latlng, {
+                color: col,
+                radius: r, 
+                weight: 1,
+                fillOpacity: 0.5
+            });
+        },
+        onEachFeature: function (feature, layer) {
+            layer.bindPopup(feature.properties.mag);
+        }
     });
-  
-    createMap(earthquakes);
-  }
 
+ createMap(earthquakes); 
+}
   
 function createMap(earthquakes) {
 
