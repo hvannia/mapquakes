@@ -1,6 +1,6 @@
 // all earthquakes past 7 days geojson data from usgs
 
-var mapZoomLevel = 6;
+var mapZoomLevel = 12;
 var gData=[];
  
  const link ="https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
@@ -17,42 +17,46 @@ function createFeatures(earthquakeFeatures){
 
   */
 
-    let r=12;
-    let col="#FF4500"; // red-orang
+    let r=0;
+    let col=""; // red-orang
 
-    earthquakes = L.geoJson(earthquakeFeatures), {
+    earthquakes = L.geoJson(earthquakeFeatures, {
         style: function(feature) {
-            return {
-                color: "red",
-                radius:14
-            };
-         },
-        pointToLayer: function(feature, latlng) {
-            if (feature.properties.mag >4 && feature.properties.mag<5 ){
+            if (feature.properties.mag >=5){
+                r=12;
+                col="#ff3b00";
+            }else if (feature.properties.mag >4 && feature.properties.mag<5 ){
                 r=10;
-                col="FF6347";
+                col="#ff7b00";
             }else if(feature.properties.mag >3 && feature.properties.mag<4){
                 r=8;
-                col="#DAA520";
+                col="#ffd000";
             }else if (feature.properties.mag >2 && feature.properties.mag<3){
                 r=6;
-                col="#ADFF2D";
+                col="#f2ff00";
             }else if (feature.properties.mag >1 && feature.properties.mag<2){
                 r=4;
-                col="#ADFF2D";
+                col="#9dff00";
             }else{
                 r=2;
-                col="#90EE90";
+                col="#00ffa9";
             }
+            return {
+                color: col,
+                radius:r
+            };
+         },
+        pointToLayer : function(feature, latlng) {
+            
             return new L.CircleMarker(latlng, {
                 color: col,
                 radius: r, 
                 weight: 1,
-                fillOpacity: 0.5
+                fillOpacity: 0.75
             });
         },
         onEachFeature: function (feature, layer) {
-            layer.bindPopup(feature.properties.mag);
+            layer.bindPopup(` <b>${feature.properties.place}</b> <br /> magnitude: ${feature.properties.mag} `);
         }
     });
 
@@ -101,8 +105,8 @@ function createMap(earthquakes) {
       center: [
         37.09, -95.71
       ],
-      zoom: 5,
-      layers: [streetmap, earthquakes]
+      zoom: 2,
+      layers: [satellitemap, earthquakes]
     });
   
     // Create a layer control
