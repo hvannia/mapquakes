@@ -2,6 +2,7 @@
 
 var mapZoomLevel = 12;
 var gData=[];
+var legend = L.control({position: 'bottomright'});
  
  const link ="https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
  
@@ -10,6 +11,10 @@ var gData=[];
     console.log(data); 
     createFeatures(data.features);
 });
+
+function getColor(d) {
+    return d > 5? '#FFEDA0' : d > 4? '#FED976' : d > 3? '#FEB24C' : d > 2? '#FD8D3C' : d >1 ?'#FC4E2A': '#E31A1C';
+}
 
 
 function createFeatures(earthquakeFeatures){
@@ -61,6 +66,7 @@ function createFeatures(earthquakeFeatures){
     });
 
  createMap(earthquakes); 
+ 
 }
   
 function createMap(earthquakes) {
@@ -115,5 +121,21 @@ function createMap(earthquakes) {
     L.control.layers(baseMaps, overlayMaps, {
       collapsed: false
     }).addTo(myMap);
+    
+    legend.onAdd = function (map) {
+        var div = L.DomUtil.create('div', 'info legend'),
+            rscale = [0, 1,2,3, 4, 5],
+            rlabels = ['5+','4-5','3-4','2-3','1-2','0-1'];
+    
+        // loop through our density intervals and generate a label with a colored square for each interval
+        for (var i = 0; i < rscale.length; i++) {
+            div.innerHTML +=
+                '<i style="background:' + getColor(rscale[i] + 1) + '"></i> ' +
+                rscale[i] + (rscale[i + 1] ? '&ndash;' + rscale[i + 1] + '<br>' : '+');
+        }
+    
+        return div;
+        };
+        legend.addTo(myMap);
   }
   
