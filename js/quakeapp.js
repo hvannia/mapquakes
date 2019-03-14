@@ -13,7 +13,9 @@ var legend = L.control({position: 'bottomright'});
 });
 
 function getColor(d) {
-    return d > 5? '#FFEDA0' : d > 4? '#FED976' : d > 3? '#FEB24C' : d > 2? '#FD8D3C' : d >1 ?'#FC4E2A': '#E31A1C';
+    //return d > 5? '#FFEDA0' : d > 4? '#FED976' : d > 3? '#FEB24C' : d > 2? '#FD8D3C' : d >1 ?'#FC4E2A': '#E31A1C';
+    //return d > 5? '#00ffa9' : d > 4? '#9dff00' : d > 3? '#f2ff00' : d > 2? '#ffd000' : d >1 ?'#ff7b00': '#ff3b00';
+    return d > 5? '#ff3b00' : d > 4? '#ff7b00' : d > 3? '#ffd000' : d > 2? '#f2ff00' : d >1 ? '#9dff00': '#00ffa9';
 }
 
 
@@ -124,14 +126,14 @@ function createMap(earthquakes) {
     
     legend.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'info legend'),
-            rscale = [0, 1,2,3, 4, 5],
-            rlabels = ['5+','4-5','3-4','2-3','1-2','0-1'];
+            rscale = [0, 1,2,3, 4, 5];
+            //rlabels = [,'4-5','3-4','2-3','1-2','0-1'];
     
         // loop through our density intervals and generate a label with a colored square for each interval
         for (var i = 0; i < rscale.length; i++) {
             div.innerHTML +=
                 '<i style="background:' + getColor(rscale[i] + 1) + '"></i> ' +
-                rscale[i] + (rscale[i + 1] ? '&ndash;' + rscale[i + 1] + '<br>' : '+');
+                rscale[i] + ( rscale[i + 1] ? '&ndash;' + rscale[i + 1] + '<br>' : '+');
         }
     
         return div;
